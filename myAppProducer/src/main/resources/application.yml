@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+spring:
+  kafka:
+    topic: transaction-events
+    template:
+      default-topic: transaction-events
+    producer:
+      bootstrap-servers: PLAINTEXT://localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
