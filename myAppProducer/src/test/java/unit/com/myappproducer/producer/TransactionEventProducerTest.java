@@ -2,7 +2,7 @@ package com.myappproducer.producer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import creator.TransactionDtoCreator;
+import com.myappproducer.creator.TransactionDtoCreator;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.jupiter.api.DisplayName;
