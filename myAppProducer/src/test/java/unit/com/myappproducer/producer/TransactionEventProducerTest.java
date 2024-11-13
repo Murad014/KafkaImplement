@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myappproducer.creator.TransactionDtoCreator;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +16,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -22,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
+@TestPropertySource(properties = "spring.kafka.topic=test-topic")
 class TransactionEventProducerTest {
 
     @Mock
@@ -35,6 +39,13 @@ class TransactionEventProducerTest {
 
     private final static String TOPIC_NAME = "transaction-events";
 
+    @BeforeEach
+    void beforeEach() {
+        ReflectionTestUtils.setField(transactionEventProducer, "topic", "transaction-events");
+
+    }
+
+
     @Test
     @DisplayName("Transaction Event Producer")
     void givenTransactionDto_whenSendSuccessfully_thenReturnCompatibleFutureWithSendResult() throws JsonProcessingException, ExecutionException, InterruptedException {
@@ -44,7 +55,7 @@ class TransactionEventProducerTest {
         var message = objectMapper.writeValueAsString(transactionDto);
 
         // Mocking SendResult and Kafka interaction
-        ProducerRecord<Long, String> producerRecord = new ProducerRecord<>("transaction-events", 1L, message);
+        ProducerRecord<Long, String> producerRecord = new ProducerRecord<>(TOPIC_NAME, 1L, message);
         RecordMetadata recordMetadata = mock(RecordMetadata.class);
         SendResult<Long, String> sendResult = new SendResult<>(producerRecord, recordMetadata);
         CompletableFuture<SendResult<Long, String>> future = CompletableFuture.completedFuture(sendResult);

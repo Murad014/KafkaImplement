@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
-
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -18,7 +17,7 @@ public class TransactionEventProducer {
     private final ObjectMapper objectMapper;
 
     @Value("${spring.kafka.topic}")
-    private String topic;
+    public String topic;
 
     public TransactionEventProducer(KafkaTemplate<Long, String> kafkaTemplate, ObjectMapper objectMapper) {
         this.kafkaTemplate = kafkaTemplate;
@@ -29,7 +28,7 @@ public class TransactionEventProducer {
             throws JsonProcessingException {
         var dtoToString  = objectMapper.writeValueAsString(transactionDto);
 
-        return kafkaTemplate.send("transaction-events", transactionDto.getId(), dtoToString);
+        return kafkaTemplate.send(topic, transactionDto.getId(), dtoToString);
     }
 
 
